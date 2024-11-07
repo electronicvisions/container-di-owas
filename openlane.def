@@ -1,0 +1,12 @@
+# Changes to efabless/openlane:
+# * install the sky130 PDK into the efabless image (and set the PDK_ROOT).
+Bootstrap: docker
+From: efabless/openlane:2024.09.19
+
+%post
+    # install sky130 pdk
+    cd /openlane1
+    volare fetch --pdk-root=/pdk --pdk="sky130"
+
+%environment
+    export PDK_ROOT=$(realpath /pdk/volare/sky130/versions/*/)
