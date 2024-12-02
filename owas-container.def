@@ -4,8 +4,8 @@ Bootstrap: docker
 From: debian:bookworm
 
 %files
-    env/container/openlane.def /openlane.def
-    env/container/flow.tcl /usr/local/bin/flow.tcl
+    openlane.def /openlane.def
+    flow.tcl /usr/local/bin/flow.tcl
 
 %post -c /bin/bash
     chmod +x /usr/local/bin/flow.tcl
