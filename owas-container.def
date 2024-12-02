@@ -1,0 +1,99 @@
+# This is the main OWAS container image
+
+Bootstrap: docker
+From: debian:bookworm
+
+%files
+    env/container/openlane.def /openlane.def
+    env/container/flow.tcl /usr/local/bin/flow.tcl
+
+%post -c /bin/bash
+    chmod +x /usr/local/bin/flow.tcl
+
+    apt-get update
+    apt install -o DPkg::Options::=--force-confold -y wget
+
+    # apptainer for embedded efabless/openlane container, other stuff for spack
+    wget https://github.com/apptainer/apptainer/releases/download/v1.3.4/apptainer_1.3.4_amd64.deb
+    apt install -o DPkg::Options::=--force-confold -y \
+        ./apptainer_1.3.4_amd64.deb \
+        fuse3           \
+        curl            \
+        git             \
+        python3         \
+        python3-tk      \
+        python3-dev     \
+        python3-venv    \
+        gcc             \
+        g++             \
+        g++-11          \
+        gfortran        \
+        gfortran-11     \
+        make            \
+        patch           \
+        gpg             \
+        file            \
+        gpg-agent       \
+        xz-utils        \
+        unzip           \
+        bzip2           \
+        automake        \
+        autoconf        \
+        flex            \
+        bison           \
+        pkgconf         \
+        zlib1g-dev      \
+        libreadline-dev \
+        gperf           \
+        libdb-dev       \
+        libdb++-dev     \
+        db-util         \
+        m4              \
+        cmake           \
+        libtool         \
+        perl            \
+        klayout         \
+        ccache
+
+    apptainer build /openlane.img /openlane.def
+
+    git clone --depth=2 -b v0.22.1-fix_verilator https://github.com/electronicvisions/spack /spack
+    export SPACK_DISABLE_LOCAL_CONFIG=1
+    export SPACK_USER_CONFIG_PATH=/dev/null
+    /spack/bin/spack bootstrap root /spack/bootstrap
+    /spack/bin/spack compiler find
+    /spack/bin/spack compilers
+    find /spack/etc
+    /spack/bin/spack bootstrap now
+    /spack/bin/spack bootstrap status || true # TODO: delete
+    /spack/bin/spack external find binutils
+    /spack/bin/spack external find python
+    /spack/bin/spack external find gmake
+    /spack/bin/spack external find automake
+    /spack/bin/spack external find autoconf
+    /spack/bin/spack external find flex
+    /spack/bin/spack external find bison
+    /spack/bin/spack external find ccache
+    /spack/bin/spack external find pkgconf
+    /spack/bin/spack external find berkeley-db
+    /spack/bin/spack external find m4
+    /spack/bin/spack external find cmake
+    /spack/bin/spack external find libtool
+    /spack/bin/spack external find perl
+
+    /spack/bin/spack find -l
+
+    # define owas environmentberkeley-db
+    /spack/bin/spack env create owas
+    /spack/bin/spack -e owas add verilator
+    /spack/bin/spack -e owas concretize
+    /spack/bin/spack -e owas install -v -j $(( $(nproc) / 2 ))
+
+    # create env script
+    . /spack/share/spack/setup-env.sh
+    spack env activate owas --sh > /spack_owas.sh
+
+%environment
+    export SPACK_DISABLE_LOCAL_CONFIG=1
+    export SPACK_USER_CONFIG_PATH=/dev/null
+    . /spack_owas.sh
