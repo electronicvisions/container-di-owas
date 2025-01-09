@@ -53,6 +53,11 @@ From: debian:bookworm
         libtool         \
         perl            \
         klayout         \
+        ghdl-mcode      \
+        iverilog        \
+        binutils-riscv64-unknown-elf \
+        gcc-riscv64-linux-gnu        \
+        g++-riscv64-linux-gnu        \
         ccache
 
     apptainer build /openlane.img /openlane.def
@@ -86,6 +91,7 @@ From: debian:bookworm
     # define owas environmentberkeley-db
     /spack/bin/spack env create owas
     /spack/bin/spack -e owas add verilator
+    # TODO: add ghdl, iverilog/icarus, cross compiler via spack
     /spack/bin/spack -e owas concretize
     /spack/bin/spack -e owas install -v -j $(( $(nproc) / 2 ))
 
