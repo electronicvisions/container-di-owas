@@ -60,6 +60,11 @@ From: debian:bookworm
         g++-riscv64-linux-gnu        \
         ccache
 
+    # install some binary standalone riscv toolchain
+    wget https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/download/v14.2.0-3/xpack-riscv-none-elf-gcc-14.2.0-3-linux-x64.tar.gz
+    mkdir -p /opt/riscv-none-elf-gcc
+    tar -zxf ./xpack-riscv-none-elf-gcc-14.2.0-3-linux-x64.tar.gz -C /opt/riscv-none-elf-gcc --strip-components=1
+
     apptainer build /openlane.img /openlane.def
 
     git clone --depth=2 -b v0.22.1-fix_verilator https://github.com/electronicvisions/spack /spack
@@ -103,3 +108,4 @@ From: debian:bookworm
     export SPACK_DISABLE_LOCAL_CONFIG=1
     export SPACK_USER_CONFIG_PATH=/dev/null
     . /spack_owas.sh
+    export PATH=/opt/riscv-none-elf-gcc/bin:$PATH
