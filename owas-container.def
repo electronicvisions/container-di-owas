@@ -61,9 +61,6 @@ From: debian:bookworm
         g++-riscv64-linux-gnu        \
         ccache
 
-    # enable pass-through of mounts
-    sed -i 's/^\(mount hostfs\s*=\s*\)no/\1yes/' /etc/apptainer/apptainer.conf
-
     # install some binary standalone riscv toolchain
     wget https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/download/v14.2.0-3/xpack-riscv-none-elf-gcc-14.2.0-3-linux-x64.tar.gz
     mkdir -p /opt/riscv-none-elf-gcc
