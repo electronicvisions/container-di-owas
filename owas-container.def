@@ -7,6 +7,7 @@ From: debian:bookworm
     openlane.def /openlane.def
     flow.tcl /usr/local/bin/flow.tcl
     ghdl /usr/local/bin/ghdl
+    spack_owas /spack_owas
 
 %post -c /bin/bash
     chmod +x /usr/local/bin/flow.tcl
@@ -84,6 +85,9 @@ From: debian:bookworm
     git clone --depth=2 -b v0.22.1-fix_verilator https://github.com/electronicvisions/spack /spack
     export SPACK_DISABLE_LOCAL_CONFIG=1
     export SPACK_USER_CONFIG_PATH=/dev/null
+    /spack/bin/spack config add "packages:all:target:[x86_64]"
+    /spack/bin/spack config add "modules:prefix_inspections:lib64:[LD_LIBRARY_PATH]"
+    /spack/bin/spack config add "modules:prefix_inspections:lib:[LD_LIBRARY_PATH]"
     /spack/bin/spack bootstrap root /spack/bootstrap
     /spack/bin/spack compiler find
     /spack/bin/spack compilers
@@ -107,11 +111,15 @@ From: debian:bookworm
 
     /spack/bin/spack find -l
 
+    /spack/bin/spack repo add /spack_owas
+
     # define owas environmentberkeley-db
     /spack/bin/spack env create owas
     /spack/bin/spack -e owas add verilator
     # TODO: add ghdl, iverilog/icarus, cross compiler via spack
+    /spack/bin/spack -e owas add py-spice ^ngspice+cider+openmp+osdi
     /spack/bin/spack -e owas concretize
+    /spack/bin/spack -e owas fetch
     /spack/bin/spack -e owas install -v -j $(( $(nproc) / 2 ))
 
     # create env script
