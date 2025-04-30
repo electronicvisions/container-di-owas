@@ -1,0 +1,2 @@
+#!/bin/bash
+apptainer exec --bind /usr/local/share/pdk /openlane2.img openlane $*

@@ -1,2 +1,2 @@
 #!/bin/bash
-apptainer exec /openlane.img flow.tcl $*
+apptainer exec --bind /usr/local/share/pdk /openlane.img flow.tcl $*
