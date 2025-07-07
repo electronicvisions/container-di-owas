@@ -5,6 +5,8 @@ From: debian:bookworm
 
 %files
     flow.tcl /usr/local/bin/flow.tcl
+    librelane.def /librelane.def
+    librelane /usr/local/bin/nix-shell-librelane
     openroad /usr/local/bin/openroad
     openlane /usr/local/bin/openlane
     ghdl /usr/local/bin/ghdl
@@ -12,6 +14,7 @@ From: debian:bookworm
 
 %post -c /bin/bash
     chmod +x /usr/local/bin/flow.tcl
+    chmod +x /usr/local/bin/nix-shell-librelane
     chmod +x /usr/local/bin/openroad
     chmod +x /usr/local/bin/openlane
     chmod +x /usr/local/bin/ghdl
@@ -73,7 +76,8 @@ From: debian:bookworm
         binutils-riscv64-unknown-elf \
         gcc-riscv64-linux-gnu        \
         g++-riscv64-linux-gnu        \
-        ccache
+        ccache          \
+        fakeroot
 
     # install some binary standalone riscv toolchain
     XPACK_VERSION=14.2.0-3
@@ -103,6 +107,9 @@ From: debian:bookworm
 
     # pull openlane2 container
     apptainer pull /openlane2.img docker://ghcr.io/efabless/openlane2:2.3.10
+
+    # build librelane container
+    apptainer build /librelane.img /librelane.def
 
     # convert gdhl container
     apptainer pull /ghdl.img docker://ghdl/ghdl:bookworm-mcode
