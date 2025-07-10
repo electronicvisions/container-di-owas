@@ -4,9 +4,10 @@ Bootstrap: docker
 From: ubuntu:22.04
 
 %setup
+    mkdir ${APPTAINER_ROOTFS}/nix_build_cache
     mkdir ${APPTAINER_ROOTFS}/usr/local/share/pdk
 
-%post
+%post -c /bin/bash
     apt-get update -y
     apt-get install -o DPkg::Options::=--force-confold -y -q --reinstall \
         curl xz-utils git manpages
@@ -22,7 +23,7 @@ From: ubuntu:22.04
     echo "build-users-group =" > /etc/nix/nix.conf
     echo "download-buffer-size = 1073741824" >> /etc/nix/nix.conf
     echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
-    echo "substituters = https://cache.nixos.org https://nix-cache.fossi-foundation.org" >> /etc/nix/nix.conf
+    echo "substituters = file:///nix_build_cache?trusted=1 https://cache.nixos.org https://nix-cache.fossi-foundation.org" >> /etc/nix/nix.conf
     echo "trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-cache.fossi-foundation.org:3+K59iFwXqKsL7BNu6Guy0v+uTlwsxYQxjspXzqLYQs=" >> /etc/nix/nix.conf
     ./nix-install --no-daemon --yes --no-modify-profile
     rm ./nix-install
@@ -33,6 +34,9 @@ From: ubuntu:22.04
     LIBRELANE_VERSION="ihp" # moving branch, no tags yet
     NIX_URL="github:librelane/librelane/${LIBRELANE_VERSION}#devShells.x86_64-linux.default"
     nix build ${NIX_URL}
+    if [[ "$APPTAINER_BIND" == *"/nix_build_cache"* ]]; then
+        nix copy --to file:///nix_build_cache ${NIX_URL}
+    fi
 
     chmod 666 /nix/var/nix/db/big-lock
     chmod 777 /nix/var/nix/db
