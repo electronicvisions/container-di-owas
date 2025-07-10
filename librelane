@@ -1,3 +1,2 @@
 #!/bin/bash
-export APPTAINERENV_NIX_STATE_HOME=/nix/var/nix/profiles/per-user/root
-apptainer exec --fakeroot --writable-tmpfs /librelane.img bash -c "source /.nix-profile/etc/profile.d/nix.sh; nix-shell --readonly-mode /librelane"
+apptainer exec --bind /usr/local/share/pdk --writable-tmpfs /librelane.img bash -c "source /result/entrypoint; librelane $*"

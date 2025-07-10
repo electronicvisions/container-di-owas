@@ -6,15 +6,15 @@ From: debian:bookworm
 %files
     flow.tcl /usr/local/bin/flow.tcl
     librelane.def /librelane.def
-    librelane /usr/local/bin/nix-shell-librelane
+    librelane /usr/local/bin/librelane
     openroad /usr/local/bin/openroad
     openlane /usr/local/bin/openlane
     ghdl /usr/local/bin/ghdl
     spack_owas /spack_owas
 
 %post -c /bin/bash
+    chmod +x /usr/local/bin/librelane
     chmod +x /usr/local/bin/flow.tcl
-    chmod +x /usr/local/bin/nix-shell-librelane
     chmod +x /usr/local/bin/openroad
     chmod +x /usr/local/bin/openlane
     chmod +x /usr/local/bin/ghdl

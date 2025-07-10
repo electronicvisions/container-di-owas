@@ -3,6 +3,9 @@
 Bootstrap: docker
 From: ubuntu:22.04
 
+%setup
+    mkdir ${APPTAINER_ROOTFS}/usr/local/share/pdk
+
 %post
     apt-get update -y
     apt-get install -o DPkg::Options::=--force-confold -y -q --reinstall \
@@ -17,16 +20,19 @@ From: ubuntu:22.04
     chmod +x ./nix-install
     mkdir /etc/nix
     echo "build-users-group =" > /etc/nix/nix.conf
+    echo "download-buffer-size = 1073741824" >> /etc/nix/nix.conf
+    echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
+    echo "substituters = https://cache.nixos.org https://nix-cache.fossi-foundation.org" >> /etc/nix/nix.conf
+    echo "trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-cache.fossi-foundation.org:3+K59iFwXqKsL7BNu6Guy0v+uTlwsxYQxjspXzqLYQs=" >> /etc/nix/nix.conf
     ./nix-install --no-daemon --yes --no-modify-profile
     rm ./nix-install
     export USER=root
     . $HOME/.nix-profile/etc/profile.d/nix.sh
 
     # now provide librelane (officially recommended way)
-    LIBRELANE_VERSION="2.4.0.dev10"
-    git clone https://github.com/librelane/librelane -b ${LIBRELANE_VERSION} /librelane
-    cd /librelane
-    nix-shell --run 'exit'
+    LIBRELANE_VERSION="ihp" # moving branch, no tags yet
+    NIX_URL="github:librelane/librelane/${LIBRELANE_VERSION}#devShells.x86_64-linux.default"
+    nix build ${NIX_URL}
 
     chmod 666 /nix/var/nix/db/big-lock
     chmod 777 /nix/var/nix/db
