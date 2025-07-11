@@ -4,19 +4,13 @@ Bootstrap: docker
 From: debian:bookworm
 
 %files
-    flow.tcl /usr/local/bin/flow.tcl
     librelane.def /librelane.def
     librelane /usr/local/bin/librelane
-    openroad /usr/local/bin/openroad
-    openlane /usr/local/bin/openlane
     ghdl /usr/local/bin/ghdl
     spack_owas /spack_owas
 
 %post -c /bin/bash
     chmod +x /usr/local/bin/librelane
-    chmod +x /usr/local/bin/flow.tcl
-    chmod +x /usr/local/bin/openroad
-    chmod +x /usr/local/bin/openlane
     chmod +x /usr/local/bin/ghdl
 
     apt-get update
@@ -92,21 +86,12 @@ From: debian:bookworm
     pip3 install --upgrade --no-cache-dir volare==0.20.6
     mkdir -p /usr/local/share/pdk
 
-    # install sky130 pdk
-    volare fetch --pdk-root=/usr/local/share/pdk --pdk="sky130" bdc9412b3e468c102d01b7cf6337be06ec6e9c9a
-
     # install IHP PDK of some special version
     volare build --pdk-root=/usr/local/share/pdk --pdk="ihp_sg13g2" 68eebafcd9b2f5e92c69d37a8d3d90eb266550f5
 
     # leave volare venv
     deactivate
     rm -rf /tmp/venv # technically not needed
-
-    # pull openlane1 container
-    apptainer pull /openlane.img docker://efabless/openlane:2024.09.19
-
-    # pull openlane2 container
-    apptainer pull /openlane2.img docker://ghcr.io/efabless/openlane2:2.3.10
 
     # build librelane container
     apptainer build /librelane.img /librelane.def
