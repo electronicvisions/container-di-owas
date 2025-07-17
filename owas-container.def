@@ -130,6 +130,9 @@ From: debian:bookworm
     /spack/bin/spack -e owas add verilator
     # TODO: add ghdl, iverilog/icarus, cross compiler via spack
     /spack/bin/spack -e owas add py-spice ^ngspice+cider+openmp+osdi
+    /spack/bin/spack -e owas add py-pytest
+    /spack/bin/spack -e owas add py-pylint
+    /spack/bin/spack -e owas add py-pycodestyle
     /spack/bin/spack -e owas concretize
     /spack/bin/spack -e owas fetch
     /spack/bin/spack -e owas install -v -j $(( $(nproc) / 2 ))
