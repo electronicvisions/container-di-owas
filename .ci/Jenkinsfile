@@ -1,0 +1,34 @@
+@Library("jenlib") _
+
+try {
+
+	runOnSlave(label: "frontend") {
+		stage("Checkout") {
+			checkout([
+					$class: 'GitSCM',
+					branches: scm.branches,
+					doGenerateSubmoduleConfigurations: true,
+					extensions: scm.extensions +
+						[[$class: 'SubmoduleOption', parentCredentials: true]] +
+						[[$class: 'CloneOption', depth: 2, noTags: false, reference: '', shallow: true]],
+					userRemoteConfigs: scm.userRemoteConfigs
+			])
+		}
+	}
+
+	stage("Build OWAS Container") {
+		onSlurmResource(partition: "batch", "cpus-per-task": "32") {
+			jesh("export http_proxy=http://proxy.kip.uni-heidelberg.de:8080 https_proxy=http://proxy.kip.uni-heidelberg.de:8080; make")
+		}
+	}
+
+} catch (Throwable t) {
+	// TODO: replace by something that talks to nextcloud chat
+	notifyFailure(mattermostChannel: "#di-owas")
+	throw t
+}
+
+if (currentBuild.currentResult != "SUCCESS") {
+	// TODO: replace by something that talks to nextcloud chat
+	notifyFailure(mattermostChannel: "#di-owas")
+}
