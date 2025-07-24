@@ -1,5 +1,32 @@
 @Library("jenlib") _
 
+import groovy.transform.Field
+
+
+/**
+ * Build and deploy a new 'latest' build.
+ *
+ * This should be a @Field, having it a function is a workaround for JENKINS-63384.
+ */
+boolean buildLatestStable() {
+	return env.JOB_NAME.contains("latest")
+}
+
+/**
+ * Path the container is deployed to.
+ */
+@Field String containerPath = null
+
+/**
+ * Base directory for all deployments by this pipeline.
+ */
+@Field final String deploymentBase = "/einc/containers/owas"
+
+/**
+ * Path to the current 'stable' container.
+ */
+@Field final String latestStablePath = deploymentBase + "/stable/latest"
+
 try {
 
 	runOnSlave(label: "frontend") {
@@ -22,6 +49,18 @@ try {
 		}
 	}
 
+	conditionalStage(name: "Deployment", skip: !isTriggeredByGerrit()) {
+		runOnSlave(label: "frontend") {
+			jesh("mkdir -p `dirname ${deploymentPath}`")
+			jesh("cp owas-container.img ${deploymentPath}")
+
+			if (buildLatestStable()) {
+				jesh("ln -snf  ${deploymentPath} ${latestStablePath}")
+				cleanTestingDeployments()
+			}
+		}
+	}
+
 } catch (Throwable t) {
 	// TODO: replace by something that talks to nextcloud chat
 	notifyFailure(mattermostChannel: "#di-owas")
@@ -31,4 +70,65 @@ try {
 if (currentBuild.currentResult != "SUCCESS") {
 	// TODO: replace by something that talks to nextcloud chat
 	notifyFailure(mattermostChannel: "#di-owas")
+}
+
+
+/**
+ * Compute the build-specific path to a deployment folder.
+ *
+ * This function must not be called if the build has not been triggered by gerrit; no deployment is supposed to happen
+ * then.
+ *
+ * @return Path to deployment folder
+ */
+String getDeploymentPath() {
+	// use cached version if possible
+	if (containerPath != null) {
+		return containerPath
+	}
+
+	// Not triggered by gerrit (-> nightly build), use 'latest'.
+	if (!isTriggeredByGerrit()) {
+		containerPath = latestStablePath
+		return containerPath
+	}
+
+	final String date = jesh(returnStdout: true, script: "date --iso").trim()
+
+	if (buildLatestStable()) {
+		containerPath = getIncrementedPath("${deploymentBase}/stable/${date}")
+		return containerPath
+	}
+
+	final String changePatchId = "c${env.GERRIT_CHANGE_NUMBER}p${env.GERRIT_PATCHSET_NUMBER}"
+	containerPath = getIncrementedPath("${deploymentBase}/testing/${changePatchId}_${date}")
+	return containerPath
+}
+
+/**
+ * Generate a non-existing path in the form of {@code ${base}_INCREMENT}.
+ *
+ * @param notIncrementedPath Base path to be incremented
+ * @return Incremented path
+ */
+String getIncrementedPath(String notIncrementedPath) {
+	final String num = jesh(returnStdout: true,
+	                        script: "num=1 && " +
+	                                "while [[ -e \"${notIncrementedPath}_\$num.img\" ]]; " +
+	                                "do let num++; done && " +
+	                                "echo \$num").trim()
+
+	return "${notIncrementedPath}_${num}.img"
+}
+
+/**
+ * Remove all testing deployments related to the change triggering this build. Must only be called on merge-builds.
+ *
+ * @param buildTarget Identifier for the built target, usually the name of the respective toplevel.
+ */
+void cleanTestingDeployments() {
+	if (!buildLatestStable()) {
+		error("Cleanup must only be called for stable builds!")
+	}
+	jesh("rm -rf ${deploymentBase}/testing/c${env.GERRIT_CHANGE_NUMBER}p*")
 }
