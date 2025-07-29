@@ -73,7 +73,9 @@ From: debian:bookworm
         gcc-riscv64-linux-gnu        \
         g++-riscv64-linux-gnu        \
         ccache          \
-        fakeroot
+        fakeroot        \
+        libc6-dev       \
+        device-tree-compiler
 
     # install some binary standalone riscv toolchain
     XPACK_VERSION=14.2.0-3
@@ -81,6 +83,15 @@ From: debian:bookworm
     mkdir -p /opt/riscv-none-elf-gcc
     tar -zxf ./xpack-riscv-none-elf-gcc-${XPACK_VERSION}-linux-x64.tar.gz -C /opt/riscv-none-elf-gcc --strip-components=1
     rm ./xpack-riscv-none-elf-gcc-${XPACK_VERSION}-linux-x64.tar.gz
+
+    # install riscv-isa-sim (Spike)
+    git clone https://github.com/riscv-software-src/riscv-isa-sim.git
+    pushd riscv-isa-sim >/dev/null
+    autoreconf -i
+    ./configure --prefix=/usr/local
+    make
+    make install
+    popd >/dev/null
 
     # prepare to install PDKs into this container
     mkdir -p /usr/local/share/pdk
