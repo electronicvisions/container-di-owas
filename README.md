@@ -1,9 +1,10 @@
 # OWAS Container Build
 
-The OWAS container provides a reproducible build environment for this project.
+The OWAS container provides a reproducible build environment for the OWAS project.
 
-We manage the dependencies using the [Spack Package Manager](https://spack.io), with the notable exception of OpenLane:
-here, we extend the [OCI image provided by efabless](https://hub.docker.com/r/efabless/openlane) by the PDK installation and embed it into the OWAS container.
+We manage the dependencies using the [Spack Package Manager](https://spack.io), with the notable exceptions of _LibreLane_ and _ghdl_:
+* for _ghdl_, we convert the [`ghdl/ghdl:bookworm-mcode` OCI image](https://hub.docker.com/r/ghdl/ghdl) to SIF and embed it into this container
+* for _LibreLane_, we use the official nix-based build flow to build and embed a SIF image into this container
 
 ## Building
 
@@ -14,4 +15,4 @@ https://apptainer.org/docs/admin/latest/installation.html
 apptainer build owas.img owas-container.def
 ```
 
-Please check the [collection of common problems](../../doc/CommonProblems.md) in case you encounter any issue during the build.
+Please check the [collection of common problems](https://gerrit.bioai.eu/plugins/gitiles/chip-di-owas/+/refs/heads/main/doc/CommonProblems.md) in case you encounter any issue during the build.
