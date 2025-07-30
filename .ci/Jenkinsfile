@@ -61,6 +61,25 @@ try {
 		}
 	}
 
+	stage("Downstream Verification") {
+		List<String> jobs = [
+				"bld_gerrit_tulip_dependencies",
+				"bld_gerrit_software-di-owas_dependencies",
+		]
+
+		Map<String, Closure> downstreamJobs = jobs.collectEntries { jobName ->
+			[(jobName): {
+				build(
+						job: jobName,
+						parameters: [
+								string(name: "OVERWRITE_DEFAULT_OWAS_CONTAINER_IMAGE", value: containerPath),
+						]
+				)
+			}]
+		}
+
+		parallel(downstreamJobs)
+	}
 } catch (Throwable t) {
 	// TODO: replace by something that talks to nextcloud chat
 	notifyFailure(mattermostChannel: "#di-owas")
