@@ -4,8 +4,10 @@ Bootstrap: docker
 From: debian:bookworm
 
 %files
+    librelane.img /librelane.img
     librelane.def /librelane.def
     librelane /usr/local/bin/librelane
+    ghdl.img /ghdl.img
     ghdl /usr/local/bin/ghdl
     spack_owas /spack_owas
 
@@ -90,9 +92,6 @@ From: debian:bookworm
 
     # build librelane container
     apptainer build /librelane.img /librelane.def
-
-    # convert gdhl container
-    apptainer pull /ghdl.img docker://ghdl/ghdl:bookworm-mcode
 
     git clone --depth=2 -b v0.22.1-fix_verilator https://github.com/electronicvisions/spack /spack
     export SPACK_DISABLE_LOCAL_CONFIG=1
