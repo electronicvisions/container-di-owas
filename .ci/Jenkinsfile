@@ -65,6 +65,7 @@ try {
 		List<String> jobs = [
 				"bld_gerrit_tulip_dependencies",
 				"bld_gerrit_software-di-owas_dependencies",
+				"bld_gerrit_chip-di-owas_dependencies",
 		]
 
 		Map<String, Closure> downstreamJobs = jobs.collectEntries { jobName ->
