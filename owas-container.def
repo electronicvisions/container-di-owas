@@ -75,7 +75,8 @@ From: debian:bookworm
         ccache          \
         fakeroot        \
         libc6-dev       \
-        device-tree-compiler
+        device-tree-compiler \
+        openocd
 
     # install some binary standalone riscv toolchain
     XPACK_VERSION=14.2.0-3
