@@ -89,9 +89,20 @@ From: debian:bookworm
     git clone https://github.com/riscv-software-src/riscv-isa-sim.git
     pushd riscv-isa-sim >/dev/null
     autoreconf -i
-    ./configure --prefix=/usr/local
+    ./configure --prefix=/usr/local --with-target=riscv-none-elf
     make
     make install
+    popd >/dev/null
+
+    # install riscv-pk (RISC-V Proxy Kernel)
+    export PATH=/opt/riscv-none-elf-gcc/bin:$PATH
+    git clone https://github.com/riscv-software-src/riscv-pk.git
+    pushd riscv-pk >/dev/null
+    mkdir -p build && pushd build >/dev/null
+    ../configure --prefix=/usr/local --host=riscv-none-elf --with-arch=rv32ic_zicsr_zifencei
+    make
+    make install
+    popd >/dev/null
     popd >/dev/null
 
     # prepare to install PDKs into this container
