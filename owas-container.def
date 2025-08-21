@@ -76,7 +76,9 @@ From: debian:bookworm
         fakeroot        \
         libc6-dev       \
         device-tree-compiler \
-        openocd
+        openocd         \
+        bc              \
+	qemu-system-riscv32
 
     # install some binary standalone riscv toolchain
     XPACK_VERSION=14.2.0-3
