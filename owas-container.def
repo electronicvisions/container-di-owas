@@ -161,6 +161,10 @@ From: debian:bookworm
     /spack/bin/spack -e owas add py-pytest
     /spack/bin/spack -e owas add py-pylint
     /spack/bin/spack -e owas add py-pycodestyle
+    /spack/bin/spack -e owas add py-torch
+    /spack/bin/spack -e owas add py-torchvision
+    /spack/bin/spack -e owas add py-onnx
+    /spack/bin/spack -e owas add py-onnxscript
     /spack/bin/spack -e owas concretize
     /spack/bin/spack -e owas fetch
     /spack/bin/spack -e owas install -v -j $(( $(nproc) / 2 ))
