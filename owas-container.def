@@ -115,7 +115,7 @@ From: debian:bookworm
     git clone https://github.com/IHP-GmbH/IHP-Open-PDK && cd IHP-Open-PDK && git reset --hard 0854e9bcd558b68c573149038b4c95706314e2f1
     popd >/dev/null
 
-    git clone --depth=2 -b v0.22.1-fix_verilator https://github.com/electronicvisions/spack /spack
+    git clone --depth=2 -b v1.0.1 https://github.com/spack/spack /spack
     export SPACK_DISABLE_LOCAL_CONFIG=1
     export SPACK_USER_CONFIG_PATH=/dev/null
     /spack/bin/spack config add "packages:all:target:[x86_64]"
