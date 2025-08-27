@@ -78,6 +78,7 @@ From: debian:bookworm
         device-tree-compiler \
         openocd         \
         bc              \
+        graphviz        \
 	qemu-system-riscv32
 
     # install some binary standalone riscv toolchain
