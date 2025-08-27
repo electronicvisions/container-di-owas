@@ -81,11 +81,18 @@ From: debian:bookworm
 	qemu-system-riscv32
 
     # install some binary standalone riscv toolchain
-    XPACK_VERSION=14.2.0-3
-    wget https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/download/v${XPACK_VERSION}/xpack-riscv-none-elf-gcc-${XPACK_VERSION}-linux-x64.tar.gz
+    XPACK_VERSION_CC=14.2.0-3
+    wget https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/download/v${XPACK_VERSION_CC}/xpack-riscv-none-elf-gcc-${XPACK_VERSION_CC}-linux-x64.tar.gz
     mkdir -p /opt/riscv-none-elf-gcc
-    tar -zxf ./xpack-riscv-none-elf-gcc-${XPACK_VERSION}-linux-x64.tar.gz -C /opt/riscv-none-elf-gcc --strip-components=1
-    rm ./xpack-riscv-none-elf-gcc-${XPACK_VERSION}-linux-x64.tar.gz
+    tar -zxf ./xpack-riscv-none-elf-gcc-${XPACK_VERSION_CC}-linux-x64.tar.gz -C /opt/riscv-none-elf-gcc --strip-components=1
+    rm ./xpack-riscv-none-elf-gcc-${XPACK_VERSION_CC}-linux-x64.tar.gz
+
+    # install some binary standalone version of qemu for riscv
+    XPACK_VERSION_QEMU=8.2.6-1
+    wget https://github.com/xpack-dev-tools/qemu-riscv-xpack/releases/download/v${XPACK_VERSION_QEMU}/xpack-qemu-riscv-${XPACK_VERSION_QEMU}-linux-x64.tar.gz
+    mkdir -p /opt/qemu-riscv
+    tar -zxf ./xpack-qemu-riscv-${XPACK_VERSION_QEMU}-linux-x64.tar.gz -C /opt/qemu-riscv --strip-components=1
+    rm ./xpack-qemu-riscv-${XPACK_VERSION_QEMU}-linux-x64.tar.gz
 
     # install riscv-isa-sim (Spike)
     git clone https://github.com/riscv-software-src/riscv-isa-sim.git
@@ -166,4 +173,4 @@ From: debian:bookworm
     export SPACK_DISABLE_LOCAL_CONFIG=1
     export SPACK_USER_CONFIG_PATH=/dev/null
     . /spack_owas.sh
-    export PATH=/opt/riscv-none-elf-gcc/bin:$PATH
+    export PATH=/opt/riscv-none-elf-gcc/bin:/opt/qemu-riscv/bin:$PATH
