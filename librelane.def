@@ -31,8 +31,8 @@ From: ubuntu:22.04
     . $HOME/.nix-profile/etc/profile.d/nix.sh
 
     # now provide librelane (officially recommended way)
-    LIBRELANE_VERSION="greyhound" # moving branch, no tags yet
-    NIX_URL="github:mole99/librelane/${LIBRELANE_VERSION}#devShells.x86_64-linux.default"
+    LIBRELANE_VERSION="leo/ihp-sg13g2" # moving branch, no tags yet
+    NIX_URL="github:librelane/librelane/${LIBRELANE_VERSION}#devShells.x86_64-linux.default"
     nix build ${NIX_URL}
     if [[ "$APPTAINER_BIND" == *"/nix_build_cache"* ]]; then
         nix copy --to file:///nix_build_cache ${NIX_URL}

@@ -120,7 +120,7 @@ From: debian:bookworm
 
     # install IHP PDK of some special version
     pushd /usr/local/share/pdk >/dev/null
-    git clone https://github.com/mole99/IHP-Open-PDK.git --single-branch -b leo/padring --recurse-submodules
+    git clone https://github.com/mole99/IHP-Open-PDK.git --single-branch -b update-librelane --recurse-submodules
     popd >/dev/null
 
     git clone --depth=2 -b v1.0.1 https://github.com/spack/spack /spack
