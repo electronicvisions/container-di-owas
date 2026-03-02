@@ -149,6 +149,7 @@ From: debian:bookworm
     /spack/bin/spack external find cmake
     /spack/bin/spack external find libtool
     /spack/bin/spack external find perl
+    /spack/bin/spack external find graphviz
 
     /spack/bin/spack find -l
 
@@ -157,6 +158,7 @@ From: debian:bookworm
     # define owas environmentberkeley-db
     /spack/bin/spack env create owas
     /spack/bin/spack -e owas add verilator
+    /spack/bin/spack -e owas add doxygen +graphviz
     # TODO: add ghdl, iverilog/icarus, cross compiler via spack
     /spack/bin/spack -e owas add py-spice ^ngspice+cider+openmp+osdi
     /spack/bin/spack -e owas add py-pytest
