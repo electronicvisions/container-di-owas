@@ -25,6 +25,8 @@ From: ubuntu:22.04
     echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
     echo "substituters = file:///nix_build_cache?trusted=1 https://cache.nixos.org https://nix-cache.fossi-foundation.org" >> /etc/nix/nix.conf
     echo "trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= nix-cache.fossi-foundation.org:3+K59iFwXqKsL7BNu6Guy0v+uTlwsxYQxjspXzqLYQs=" >> /etc/nix/nix.conf
+    echo "require-drop-supplementary-groups = false" >> /etc/nix/nix.conf
+    unset LD_LIBRARY_PATH LD_PRELOAD
     ./nix-install --no-daemon --yes --no-modify-profile
     rm ./nix-install
     export USER=root
